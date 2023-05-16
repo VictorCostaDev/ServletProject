@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.google.gson.Gson;
 
 import br.com.victor.servlet.model.Usuario;
+import br.com.victor.servlet.repository.UsuarioRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,18 +20,18 @@ public class CadastroDeUsuarioAPI extends HttpServlet{
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		super.doPost(req, resp);
-		// ** pegar o json da requisicao -> req.getInputStream()
-		
-		// ** Transformar a InputStream() em uma String 
 		String requestJSON = req.getReader().lines().collect(Collectors.joining());
-		// {	"name": "Victor",	"email": "victor@gmail.com"}
-		
-		// ** transformar a String em um Objeto (Usar a dependencia gson)
 		Gson gson = new Gson();
-		var usuario = gson.fromJson(requestJSON, Usuario.class);
+		Usuario usuario = gson.fromJson(requestJSON, Usuario.class);
+		
+		UsuarioRepository usuarioRepository = new UsuarioRepository();
+		Usuario usuarioCriado = usuarioRepository.salvar(usuario);
 		
 		System.out.println("Nome " + usuario.getNome() + "- Email: " + usuario.getEmail()); 
+		
+		String usuarioConvertido = gson.toJson(usuarioCriado);
+		//resp.getWriter().append(usuarioConvertido);
+		resp.setStatus(201);
 	}
 	
 	@Override
