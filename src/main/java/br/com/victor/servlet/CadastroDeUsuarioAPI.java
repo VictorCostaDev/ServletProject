@@ -1,6 +1,7 @@
 package br.com.victor.servlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -18,14 +19,15 @@ public class CadastroDeUsuarioAPI extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	
+	UsuarioRepository repository = new UsuarioRepository();
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String requestJSON = req.getReader().lines().collect(Collectors.joining());
 		Gson gson = new Gson();
 		Usuario usuario = gson.fromJson(requestJSON, Usuario.class);
 		
-		UsuarioRepository usuarioRepository = new UsuarioRepository();
-		Usuario usuarioCriado = usuarioRepository.salvar(usuario);
+		Usuario usuarioCriado = repository.salvar(usuario);
 		
 		System.out.println("Nome " + usuario.getNome() + "- Email: " + usuario.getEmail()); 
 		
@@ -36,7 +38,12 @@ public class CadastroDeUsuarioAPI extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		super.doGet(req, resp);
+		Gson gson = new Gson();
+		
+		List<Usuario> todosUsuarios = repository.listarTodos();
+		String todosUsuariosJSON = gson.toJson(todosUsuarios);
+		
+		resp.getWriter().append(todosUsuariosJSON);
 	}
 
 }
