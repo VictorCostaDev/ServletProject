@@ -12,8 +12,12 @@ public class UsuarioRepository {
 	
 	public Usuario salvar(Usuario usuario) {
 		usuario.setId(UUID.randomUUID());
-		this.usuarios.add(usuario);
+		usuarios.add(usuario);
 		return usuario;
 	}
-
+	
+	
+	public List<Usuario> listarTodos() {
+		return usuarios;
+	}
 }
