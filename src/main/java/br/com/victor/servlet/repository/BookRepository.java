@@ -15,5 +15,9 @@ public class BookRepository {
 		books.add(book);
 		return book;
 	}
+	
+	public List<Book> getAllBooks() {
+		return books;
+	}
 
 }

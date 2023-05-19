@@ -1,6 +1,7 @@
 package br.com.victor.servlet;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -18,21 +19,28 @@ public class registerOfBookAPI extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	
+	BookRepository repository = new BookRepository();
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		
-		// InputStream -> String
 		String requestJSON = req.getReader().lines().collect(Collectors.joining());
 		
-		// String -> Objeto
 		Gson gson = new Gson();
-		Book book = gson.fromJson(requestJSON, Book.class); // Enviado pela request
+		Book book = gson.fromJson(requestJSON, Book.class); 
 		
-		BookRepository repository = new BookRepository();
 		Book bookRegistered = repository.save(book);
 		
 		resp.getWriter().append(gson.toJson(bookRegistered));
 		resp.setStatus(201);
+	}
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		List<Book> allBooks = repository.getAllBooks();
+		Gson gson = new Gson();
+		
+		String allBooksJSON = gson.toJson(allBooks);
+		resp.getWriter().append(allBooksJSON);
 	}
 
 }
